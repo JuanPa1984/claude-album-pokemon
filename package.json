@@ -1,0 +1,23 @@
+{
+  "name": "album-pokemon",
+  "private": true,
+  "description": "Pokémon sticker album collectibles platform",
+  "packageManager": "pnpm@12.23.0",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "typecheck": "turbo run typecheck",
+    "db:setup": "pnpm --filter @album-pokemon/api db:setup",
+    "db:seed": "pnpm --filter @album-pokemon/api db:seed",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,css}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "turbo": "^2.11.13",
+    "typescript": "^5.9.2"
+  }
+}

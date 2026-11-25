@@ -1,0 +1,10 @@
+{
+  "extends": "@album-pokemon/typescript-config/base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}

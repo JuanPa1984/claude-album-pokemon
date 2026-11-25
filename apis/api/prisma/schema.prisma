@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  username     String        @unique
+  passwordHash String
+  createdAt    DateTime      @default(now())
+  stickers     UserSticker[]
+}
+
+model Album {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  name          String
+  region        String
+  description   String
+  coverImageUrl String
+  sortOrder     Int       @default(0)
+  createdAt     DateTime  @default(now())
+  stickers      Sticker[]
+}
+
+model Sticker {
+  id            String        @id @default(cuid())
+  albumId       String
+  album         Album         @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  /// Position inside the album (1-based)
+  number        Int
+  /// National Pokédex number
+  pokedexNumber Int
+  name          String
+  imageUrl      String
+  /// COMMON | RARE | LEGENDARY (SQLite has no native enums)
+  rarity        String        @default("COMMON")
+  owners        UserSticker[]
+
+  @@unique([albumId, number])
+  @@index([albumId])
+}
+
+/// A sticker marked as owned by a user.
+model UserSticker {
+  userId     String
+  stickerId  String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sticker    Sticker  @relation(fields: [stickerId], references: [id], onDelete: Cascade)
+  acquiredAt DateTime @default(now())
+
+  @@id([userId, stickerId])
+  @@index([stickerId])
+}

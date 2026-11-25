@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-poke-red: #e3350d;
+  --color-poke-yellow: #ffcb05;
+  --color-poke-blue: #2a75bb;
+}
+
+body {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+}
