@@ -13,6 +13,10 @@
     "typecheck": {
       "dependsOn": ["^build", "db:generate"]
     },
+    "test:bdd": {
+      "dependsOn": ["^build", "db:generate"],
+      "cache": false
+    },
     "dev": {
       "dependsOn": ["^build", "db:generate"],
       "cache": false,

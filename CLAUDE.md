@@ -48,6 +48,7 @@ pnpm install
 pnpm dev             # turbo: builds shared, generates the Prisma client, starts api + web in watch mode
 pnpm build           # builds everything in dependency order
 pnpm typecheck       # tsc --noEmit in every workspace
+pnpm test:bdd        # Gherkin BDD suites: API (Cucumber.js) then web (playwright-bdd), one at a time
 pnpm db:setup        # prisma migrate dev + seed (first-time setup)
 pnpm db:seed         # re-runs the seed (idempotent; keeps users' collections)
 pnpm turbo run dev --filter=@album-pokemon/api    # run one task in one workspace (with its dependencies)
@@ -65,7 +66,7 @@ First-time setup needs the env files: copy `apis/api/.env.example` to `apis/api/
 ## Conventions
 
 - **Any change to the API contract goes into `packages/shared` first.** Then update the API service that produces the data and the web code that consumes it. Don't define DTO types twice.
-- TypeScript is strict everywhere. Formatting is Prettier with single quotes, trailing commas and a 100-character line width (`pnpm format`). There is no ESLint and there is no test suite yet.
+- TypeScript is strict everywhere. Formatting is Prettier with single quotes, trailing commas and a 100-character line width (`pnpm format`). There is no ESLint. Tests are BDD-style Gherkin features: Cucumber.js in the API (`apis/api/test`) and playwright-bdd in the web app (`apps/web/e2e`). Unit tests aren't set up.
 - Keep the seed idempotent, with upserts by `slug` and `(albumId, number)`, so that re-running it never wipes users' collections.
 
 ## Environment gotchas

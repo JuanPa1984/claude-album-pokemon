@@ -6,7 +6,9 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start --port 3000",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:bdd": "bddgen && playwright test",
+    "test:bdd:ui": "bddgen && playwright test --ui"
   },
   "dependencies": {
     "@album-pokemon/shared": "workspace:*",
@@ -16,10 +18,12 @@
   },
   "devDependencies": {
     "@album-pokemon/typescript-config": "workspace:*",
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/node": "^22.18.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "playwright-bdd": "^9.2.1",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.2"
   }

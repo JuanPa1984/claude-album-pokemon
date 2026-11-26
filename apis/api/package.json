@@ -11,7 +11,8 @@
     "db:migrate": "prisma migrate dev",
     "db:setup": "prisma migrate dev --name init && prisma db seed",
     "db:seed": "prisma db seed",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "test:bdd": "cucumber-js"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -32,11 +33,16 @@
   },
   "devDependencies": {
     "@album-pokemon/typescript-config": "workspace:*",
+    "@cucumber/cucumber": "^13.3.0",
     "@nestjs/cli": "^11.0.10",
     "@nestjs/schematics": "^11.0.7",
+    "@nestjs/testing": "^11.2.11",
     "@types/express": "^5.0.3",
     "@types/node": "^22.18.0",
+    "@types/supertest": "^7.2.1",
     "prisma": "^6.16.2",
+    "supertest": "^7.3.2",
+    "ts-node": "^10.9.2",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   }

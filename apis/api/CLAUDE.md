@@ -8,7 +8,8 @@ This is the NestJS 11 REST API for Album Pokémon. It owns the users, the album 
 pnpm dev              # nest start --watch  ->  http://localhost:3001/api
 pnpm build            # nest build (uses tsconfig.build.json; only src/ is compiled) -> dist/main.js
 pnpm start            # node dist/main
-pnpm typecheck        # tsc --noEmit (covers src/ and prisma/*.ts)
+pnpm typecheck        # tsc --noEmit (covers src/, prisma/*.ts and test/)
+pnpm test:bdd         # Cucumber.js BDD suite (Gherkin features in test/features)
 pnpm db:generate      # prisma generate  (needed after schema changes)
 pnpm db:migrate       # prisma migrate dev  (creates and applies a migration)
 pnpm db:setup         # migrate dev --name init + seed
@@ -27,7 +28,8 @@ Environment variables go in `.env`, which `@nestjs/config` and Prisma both read 
 
 ```
 src/
-  main.ts                 # bootstrap: global prefix 'api', CORS, ValidationPipe (whitelist + forbidNonWhitelisted + transform)
+  app.setup.ts            # configureApp(): global prefix 'api', CORS, ValidationPipe (whitelist + forbidNonWhitelisted + transform); shared with tests
+  main.ts                 # bootstrap: configureApp() + shutdown hooks + listen on PORT
   app.module.ts           # ConfigModule (global), JwtModule (global, expiresIn 7d), feature modules
   health.controller.ts    # GET /api/health
   prisma/                 # PrismaModule (@Global) + PrismaService (extends PrismaClient)
@@ -87,4 +89,19 @@ curl -X POST localhost:3001/api/auth/register -H 'Content-Type: application/json
 curl localhost:3001/api/albums -H "Authorization: Bearer <token>"
 ```
 
-There is no automated test suite yet. If you add one, use Jest with `@nestjs/testing`, which is the Nest default.
+## BDD tests (Cucumber.js + Gherkin)
+
+```
+cucumber.js            # config: features, ts-node/register, reports/cucumber-report.html
+test/
+  features/*.feature   # Gherkin scenarios (auth, collection)
+  steps/*.steps.ts     # step definitions; HTTP calls with supertest
+  support/world.ts     # ApiWorld: per-scenario state (last response, access token)
+  support/hooks.ts     # BeforeAll: migrate + seed prisma/test.db, boot AppModule via @nestjs/testing
+```
+
+- The suite boots the real `AppModule` in-process (no port) with the same global setup as `main.ts`, shared through `src/app.setup.ts`. Keep global pipes, prefix and CORS there so tests and production match.
+- It uses its own database, `prisma/test.db` (gitignored), and never touches `dev.db`. Each scenario starts with no users or collections; the seeded catalogue stays.
+- Step files are loaded with `ts-node` (transpile-only), not `tsx`, because Nest DI needs `emitDecoratorMetadata`, which esbuild doesn't emit.
+- Use the shared DTO types from `@album-pokemon/shared` to type response bodies in steps. Reuse existing step phrases before adding new ones.
+- `@nestjs/testing` must stay on the same major version as `@nestjs/core` (11).

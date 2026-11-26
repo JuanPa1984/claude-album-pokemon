@@ -9,6 +9,8 @@ pnpm dev        # next dev --port 3000 (Turbopack)
 pnpm build      # next build
 pnpm start      # next start --port 3000
 pnpm typecheck  # tsc --noEmit
+pnpm test:bdd   # bddgen + playwright test (Gherkin features in e2e/features)
+pnpm test:bdd:ui  # same, in Playwright UI mode
 ```
 
 Environment: `.env.local` sets `NEXT_PUBLIC_API_URL`, which defaults to `http://localhost:3001/api`. Because the value is inlined at build time, rebuild after changing it. The API must be running for the pages to load data.
@@ -53,6 +55,14 @@ The `@/*` import alias maps to `src/*`.
 - Get route params with `useParams()` in client pages. In server components, `params` is a Promise in Next 16.
 - Next 16 notes: Turbopack is the default bundler, and the old `middleware.ts` file is now called `proxy.ts` if you need one. `next build` no longer runs a linter.
 - Don't hand-write DTO types here. Import them from `@album-pokemon/shared`, and rebuild that package after changing it.
+
+## BDD tests (playwright-bdd + Gherkin)
+
+- Features are in `e2e/features/*.feature`, and step definitions in `e2e/steps/*.ts`. Import `Given`/`When`/`Then` from `e2e/steps/fixtures.ts`, which also provides a unique `trainer` fixture per scenario.
+- `bddgen` generates Playwright specs into `.features-gen/` (gitignored). Don't edit them.
+- `playwright.config.ts` starts the API and `next dev` unless they're already running on 3001 and 3000, so the suite runs against the **dev database**. Scenarios therefore register fresh, uniquely named users and never depend on existing data beyond the seeded albums.
+- Prefer role-based locators (`getByRole`, `getByLabel`). Sticker buttons expose their owned state through `aria-pressed`.
+- First run on a new machine: `pnpm exec playwright install chromium`.
 
 ## Verifying UI changes
 
