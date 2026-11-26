@@ -15,3 +15,4 @@ reports
 playwright-report
 test-results
 .features-gen
+.playwright-mcp
